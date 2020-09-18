@@ -1,0 +1,7 @@
+
+
+class DetailRepository {
+
+
+  // future
+}
