@@ -6,6 +6,7 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          title: Text('eKtp'),
           actions: [IconButton(icon: Icon(Icons.more_vert), onPressed: () {})],
         ),
         body: SafeArea(child: HomePage()));

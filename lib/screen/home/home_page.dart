@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 import 'package:validation_ektp/controllers/home_controller.dart';
 import 'package:validation_ektp/utils/strings.dart';
+import 'package:validation_ektp/widgets/card_home_widget.dart';
 
 class HomePage extends GetView<HomeController> {
   final dateNow = DateTime.now();
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       children: [
         Expanded(
@@ -20,6 +22,7 @@ class HomePage extends GetView<HomeController> {
                   return TextField(
                       onChanged: (value) => controller.setNoKtp(value),
                       keyboardType: TextInputType.number,
+                      maxLength: 16,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: Strings.INPUT_EKTP,
@@ -55,35 +58,36 @@ class HomePage extends GetView<HomeController> {
                     }
                   },
                 ),
+                Container(
+                  margin: EdgeInsets.only(top: 16.0),
+                  alignment: Alignment.topRight,
+                  child: SizedBox(
+                      height: 30.0,
+                      width: 100.0,
+                      child: Obx(() {
+                        return RaisedButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0)),
+                          color: Colors.purple[500],
+                          onPressed: controller.isActiveButton.value
+                              ? controller.onsave
+                              : null,
+                          child: Text(
+                            Strings.SUBMIT,
+                            style: theme.textTheme.button,
+                          ),
+                        );
+                      })),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: CardHomeWidget(),
+                )
               ],
             ),
           )),
         ),
-        Builder(builder: (newcontext) {
-          return SizedBox(
-            width: double.infinity,
-            child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Obx(() {
-                  return RaisedButton(
-                    onPressed: controller.isActiveButton.value
-                        ? controller.onsave
-                        : null,
-
-                    // () {
-                    //   if (controller.noKtp.value.isEmpty ||
-                    //       controller.datetime.value == 0 ||
-                    //       controller.name.value.isEmpty) {
-                    //     Scaffold.of(newcontext)
-                    //         .showSnackBar(SnackBar(content: Text('yey')));
-                    //   }
-                    // },
-
-                    child: Text(Strings.SUBMIT),
-                  );
-                })),
-          );
-        })
       ],
     );
   }

@@ -6,13 +6,5 @@ class HomeBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut(() => HomeController());
-    // Get.lazyPut(() {
-    //   final controller = Get.find<HomeController>();
-    //   final controllerTxtKtp = TextEditingController();
-    //   controllerTxtKtp
-    //       .addListener(() => controller.setKtpText(controllerTxtKtp.text));
-
-    //   return controllerTxtKtp;
-    // });
   }
 }

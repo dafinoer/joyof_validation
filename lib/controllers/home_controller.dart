@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
 import 'package:validation_ektp/models/user.dart';
-import 'package:validation_ektp/screen/detail/detail_page.dart';
+import 'package:validation_ektp/routes/app_routes.dart';
 import 'package:validation_ektp/utils/date_format_utils.dart';
-import 'package:validation_ektp/utils/logger.dart';
 
 class HomeController extends GetxController {
   TextEditingController editingControllerDate;
@@ -56,6 +55,7 @@ class HomeController extends GetxController {
   }
 
   void onsave() {
-    Get.to(DetailPage());
+    // Get.to(DetailPage());
+    Get.toNamed(Routes.DETAILS);
   }
 }

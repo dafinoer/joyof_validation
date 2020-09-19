@@ -8,4 +8,9 @@ class DateFormatUtils {
     final formatDate = DateFormat.yMMMEd('id_ID');
     return formatDate.format(time);
   } 
+
+  static String formatDayAndMonth(DateTime time){
+    final formatDate = DateFormat.Md('id_ID');
+    return formatDate.format(time);
+  }
 }
