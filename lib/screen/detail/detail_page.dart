@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/state_manager.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:validation_ektp/controllers/detail_contoller.dart';
+import 'package:validation_ektp/controllers/detail_controller.dart';
 import 'package:validation_ektp/utils/date_format_utils.dart';
 import 'package:validation_ektp/utils/strings.dart';
 

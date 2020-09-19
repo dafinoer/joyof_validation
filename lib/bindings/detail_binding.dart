@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
-import 'package:validation_ektp/controllers/detail_contoller.dart';
-import 'package:validation_ektp/repository/detail_implement.dart';
+import 'package:validation_ektp/controllers/detail_controller.dart';
 import 'package:validation_ektp/repository/detail_repository.dart';
 import 'package:validation_ektp/services/base_services.dart';
 
