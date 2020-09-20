@@ -1,11 +1,10 @@
-import 'dart:collection';
 
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:validation_ektp/controllers/home_controller.dart';
-import 'package:validation_ektp/repository/detail_repository.dart';
+import 'package:validation_ektp/repository/detail/detail_repository.dart';
 import 'package:validation_ektp/utils/date_format_utils.dart';
 import 'package:validation_ektp/utils/logger.dart';
-import 'package:validation_ektp/utils/strings.dart';
 import 'package:validation_ektp/utils/urls_endpoint.dart';
 
 enum Status { loading, success, error, notvalid }
@@ -15,9 +14,9 @@ class DetailController extends GetxController {
 
   DetailController(this._detailRepository);
 
-  var status = Status.loading.obs;
-
   final controllerHome = Get.find<HomeController>();
+
+  var status = Status.loading.obs;
 
   var provinsi = Rx<String>();
 
@@ -37,18 +36,31 @@ class DetailController extends GetxController {
 
   Future<void> checkValidationEktp() async {
     final noKtp = controllerHome.noKtp.value;
+    _detailRepository.setKtp(noKtp);
 
     try {
-      final provinceName = await fetchProvinsi(noKtp);
-      final kabupatenName = await fetchKabupaten(noKtp);
-      final kecamatanName = await fetchKecamatan(noKtp);
-      final kelurahanName = await fetchKelurahan(noKtp);
+      final urlProvince = rewriteUrlEndpoint(UrlsEndpoint.URL_PROVINCE);
+      final urlKabupaten =
+          rewriteUrlEndpoint(UrlsEndpoint.URL_KABUPATEN, from: 0, to: 2);
+      final urlKecamatan =
+          rewriteUrlEndpoint(UrlsEndpoint.URL_KECAMATAN, from: 0, to: 4);
+      final urlKelurahan =
+          rewriteUrlEndpoint(UrlsEndpoint.URL_KELURAHAN, from: 0, to: 6);
+
+      final provinceName =
+          await _detailRepository.province.getRegion(urlProvince);
+      final kabupatenName =
+          await _detailRepository.kabupaten.getRegion(urlKabupaten);
+      final kecamatanName =
+          await _detailRepository.kecamatan.getRegion(urlKecamatan);
+      final kelurahanName =
+          await _detailRepository.kelurahan.getRegion(urlKelurahan);
 
       if (provinceName != null &&
           kabupatenName != null &&
           kecamatanName != null &&
           kelurahanName != null &&
-          checkingBirthDateTxt(noKtp)) {
+          checkingBirthDateTxt(noKtp, controllerHome.datetime.value)) {
         provinsi.value = provinceName;
         kabupaten.value = kabupatenName;
         kecamatan.value = kecamatanName;
@@ -59,22 +71,22 @@ class DetailController extends GetxController {
         status(Status.notvalid);
       }
     } catch (e) {
-      status(Status.error);
       logger.e(e);
+      if(e is DioError){
+        status(Status.notvalid);
+      } else {
+        status(Status.error);
+      }
     }
   }
 
-  bool checkingBirthDateTxt(String noKtp) {
-    final birthDate = DateTime.fromMillisecondsSinceEpoch(controllerHome.datetime.value);
+  bool checkingBirthDateTxt(String noKtp, int time) {
+    final birthDate = DateTime.fromMillisecondsSinceEpoch(time);
     final formatDate = DateFormatUtils.formatDayAndMonth(birthDate).replaceAll('/', '');
-    // final ktpBirthdate = int.parse(noKtp.substring(6, 10)).toString();
     var calendarDay = int.parse(noKtp.substring(6, 8));
-    final calendarMonth = noKtp.substring(8, 10);
+    final calendarMonth = int.parse(noKtp.substring(8, 10));
 
-    if(calendarDay > 41){
-      calendarDay -= 40;
-    }
-    
+    if (calendarDay > 41) calendarDay -= 40;
 
     return formatDate.contains('$calendarDay$calendarMonth');
   }
@@ -107,87 +119,11 @@ class DetailController extends GetxController {
     return isDateTrue;
   }
 
-  String replaceEndpointId(String endpoint, int from, int to) {
+  String rewriteUrlEndpoint(String endpoint, {int from, int to}) {
     final ktpNo = controllerHome.noKtp.value;
-    final url = endpoint.replaceAll('{id}', ktpNo.substring(from, to));
+    final url = from == null && to == null
+        ? endpoint
+        : endpoint.replaceAll('{id}', ktpNo.substring(from, to));
     return url;
-  }
-
-  Future<String> fetchProvinsi(String noktp) async {
-    try {
-      final province =
-          await _detailRepository.getProvinsi(UrlsEndpoint.URL_PROVINCE);
-
-      if (province != null) {
-        final dataProvince = province
-            .where((element) => element.id.contains(noktp.substring(0, 2)))
-            .toList();
-
-        return dataProvince.isNotEmpty ? dataProvince.first.name : null;
-      }
-      return null;
-    } catch (e) {
-      logger.e(e);
-      throw Exception(e);
-    }
-  }
-
-  Future<String> fetchKabupaten(String noKtp) async {
-    try {
-      final resultKabupaten = await _detailRepository
-          .getKabupaten(replaceEndpointId(UrlsEndpoint.URL_KABUPATEN, 0, 2));
-
-      if (resultKabupaten != null && resultKabupaten.isNotEmpty) {
-        final dataKabupaten = resultKabupaten
-            .where((element) => element.id.contains(noKtp.substring(0, 4)))
-            .toList();
-
-        return dataKabupaten.isNotEmpty ? dataKabupaten.first.name : null;
-      }
-      return null;
-    } catch (e) {
-      logger.e(e);
-      throw Exception(e);
-    }
-  }
-
-  Future<String> fetchKecamatan(String noKtp) async {
-    try {
-      print(replaceEndpointId(UrlsEndpoint.URL_KECAMATAN, 0, 4));
-
-      final resultItem = await _detailRepository
-          .getKecamatan(replaceEndpointId(UrlsEndpoint.URL_KECAMATAN, 0, 4));
-
-      if (resultItem != null && resultItem.isNotEmpty) {
-        final dataKecamatan = resultItem
-            .where((element) => element.id.contains(noKtp.substring(0, 4)))
-            .toList();
-
-        return dataKecamatan.isNotEmpty ? dataKecamatan.first.name : null;
-      }
-      return null;
-    } catch (e) {
-      logger.e(e);
-      throw Exception(e);
-    }
-  }
-
-  Future<String> fetchKelurahan(String noKtp) async {
-    try {
-      final resultItem = await _detailRepository
-          .getKelurahan(replaceEndpointId(UrlsEndpoint.URL_KELURAHAN, 0, 6));
-
-      if (resultItem != null && resultItem.isNotEmpty) {
-        final dataKelurahan = resultItem
-            .where((element) => element.id.contains(noKtp.substring(0, 6)))
-            .toList();
-
-        return dataKelurahan.isNotEmpty ? dataKelurahan.first.name : null;
-      }
-      return null;
-    } catch (e) {
-      logger.e(e);
-      throw Exception(e);
-    }
   }
 }

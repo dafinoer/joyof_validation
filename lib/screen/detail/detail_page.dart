@@ -17,23 +17,26 @@ class DetailPage extends GetView<DetailController> {
         ),
         body: Obx(() {
           if (controller.status.value == Status.loading) {
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 50.0,
-                  width: mediaQuery.size.width,
-                  child: Shimmer.fromColors(
-                    baseColor: Colors.white30,
-                    highlightColor: Colors.white60,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
-                      color: Colors.white,
-                    ),
-                  ),
-                )
-              ],
+            return Center(
+              child: CircularProgressIndicator(),
             );
+            // return Row(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: [
+            //     SizedBox(
+            //       height: 50.0,
+            //       width: mediaQuery.size.width,
+            //       child: Shimmer.fromColors(
+            //         baseColor: Colors.white30,
+            //         highlightColor: Colors.white60,
+            //         child: Container(
+            //           padding: EdgeInsets.symmetric(horizontal: 16.0),
+            //           color: Colors.white,
+            //         ),
+            //       ),
+            //     )
+            //   ],
+            // );
           }
 
           if (controller.status.value == Status.notvalid) {
