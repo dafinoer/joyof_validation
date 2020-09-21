@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/state_manager.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:validation_ektp/controllers/detail_controller.dart';
 import 'package:validation_ektp/utils/date_format_utils.dart';
 import 'package:validation_ektp/utils/strings.dart';
@@ -10,6 +9,7 @@ class DetailPage extends GetView<DetailController> {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
+    final theme = Theme.of(context);
 
     return Scaffold(
         appBar: AppBar(
@@ -40,9 +40,18 @@ class DetailPage extends GetView<DetailController> {
           }
 
           if (controller.status.value == Status.notvalid) {
-            return Center(
-              child: Text('no E-Ktp tidak valid'),
-            );
+            return Align(
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.highlight_off,
+                      size: MediaQuery.of(context).size.width * 0.2,
+                    ),
+                    Text(Strings.KTP_NOT_VALID, style: theme.textTheme.headline6,)
+                  ],
+                ));
           }
 
           if (controller.status.value == Status.success) {

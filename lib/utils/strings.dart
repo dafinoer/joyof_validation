@@ -25,4 +25,8 @@ Kemudian input nama dan tanggal lahir sesuai dengan tanggal lahir yang ada di ek
 
 Kemudian klik button Submit, jika eKTP tidak valid itu berarti eKTP palsu atau ada kesalahan dari pembuatan eKTP tersebut.
   ''';
+
+  static const SETTING = 'Pengaturan';
+  static const DARK_MODE = 'Mode Gelap';
+  static const KTP_NOT_VALID = 'KTP tidak valid';
 }

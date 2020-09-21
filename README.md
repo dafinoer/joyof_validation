@@ -2,6 +2,11 @@
 
 A new Flutter project.
 
+# Screenshot
+| 1 | 2|
+|------|-------|
+|<img src="screenshot/1.png" width="400">|<img src="screenshot/2.png" width="400">|
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
